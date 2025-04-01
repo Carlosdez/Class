@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Médico Completo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step step-active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-label">Datos Personales</div>
+            </div>
+            <div class="progress-step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-label">Familiares</div>
+            </div>
+            <div class="progress-step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-label">Salud</div>
+            </div>
+            <div class="progress-step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-label">Internamientos</div>
+            </div>
+            <div class="progress-step" id="step5">
+                <div class="step-number">5</div>
+                <div class="step-label">Resumen</div>
+            </div>
+        </div>
+
+        <!-- Página 1: Datos Personales -->
+        <div id="pagina1">
+            <h2>Página 1: Datos Personales</h2>
+            <form id="formDatosPersonales">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" required>
+                
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" required>
+                
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" min="1" max="120" required>
+                
+                <label for="sexo">Sexo:</label>
+                <select id="sexo" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                
+                <div class="nav-buttons">
+                    <div>
+                        <button type="button" onclick="guardarDatos()">Grabar</button>
+                        <button type="button" onclick="editarDatos()">Editar</button>
+                    </div>
+                    <button type="button" onclick="validarPagina1()">Siguiente</button>
+                </div>
+            </form>
+            
+            <div id="datosMostrados" class="datos-mostrados hidden">
+                <h3>Datos Guardados</h3>
+                <p><strong>Nombre:</strong> <span id="displayNombre"></span></p>
+                <p><strong>Apellido:</strong> <span id="displayApellido"></span></p>
+                <p><strong>Edad:</strong> <span id="displayEdad"></span></p>
+                <p><strong>Sexo:</strong> <span id="displaySexo"></span></p>
+            </div>
+            
+            <div id="mensajeGuardado" class="mensaje hidden"></div>
+        </div>
+        
+        <!-- Página 2: Familiares -->
+        <div id="pagina2" class="hidden">
+            <h2>Página 2: Familiares</h2>
+            <form id="formFamiliares">
+                <label for="famNombre">Nombre del familiar:</label>
+                <input type="text" id="famNombre" required>
+                
+                <label for="famParentesco">Parentesco:</label>
+                <select id="famParentesco" required>
+                    <option value="">Seleccione parentesco...</option>
+                    <option value="Padre">Padre</option>
+                    <option value="Madre">Madre</option>
+                    <option value="Hijo">Hijo</option>
+                    <option value="Hija">Hija</option>
+                    <option value="Hermano">Hermano</option>
+                    <option value="Hermana">Hermana</option>
+                    <option value="Abuelo">Abuelo</option>
+                    <option value="Abuela">Abuela</option>
+                    <option value="Tío">Tío</option>
+                    <option value="Tía">Tía</option>
+                    <option value="Primo">Primo</option>
+                    <option value="Prima">Prima</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                
+                <label for="famPertenece">Pertenece a:</label>
+                <select id="famPertenece" required></select>
+                
+                <label for="famEdad">Edad:</label>
+                <input type="number" id="famEdad" min="1" max="120" required>
+                
+                <div class="nav-buttons">
+                    <div>
+                        <button type="button" onclick="agregarFamiliar()">Agregar</button>
+                    </div>
+                </div>
+            </form>
+            
+            <h3>Familiares Registrados</h3>
+            <ul id="listaFamiliares"></ul>
+            
+            <div id="mensajeGuardadoFam" class="mensaje hidden"></div>
+            
+            <div class="nav-buttons">
+                <button onclick="cambiarPagina(1)">Anterior</button>
+                <button onclick="validarPagina2()">Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Página 3: Condiciones de Salud -->
+        <div id="pagina3" class="hidden">
+            <h2>Página 3: Condiciones de Salud</h2>
+            <form id="formCondicionesSalud">
+                <label for="condEnfermedad">Enfermedad o condición:</label>
+                <input type="text" id="condEnfermedad" required>
+                
+                <label for="condTiempo">Tiempo con la enfermedad (años):</label>
+                <input type="number" id="condTiempo" min="0" max="100" step="0.5" required>
+                
+                <div class="nav-buttons">
+                    <div>
+                        <button type="button" onclick="agregarCondicion()">Agregar</button>
+                    </div>
+                </div>
+            </form>
+            
+            <h3>Condiciones Registradas</h3>
+            <ul id="listaCondiciones"></ul>
+            
+            <div id="mensajeGuardadoCond" class="mensaje hidden"></div>
+            
+            <div class="nav-buttons">
+                <button onclick="cambiarPagina(2)">Anterior</button>
+                <button onclick="validarPagina3()">Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Página 4: Internamientos -->
+        <div id="pagina4" class="hidden">
+            <h2>Página 4: Internamientos</h2>
+            <form id="formInternamientos">
+                <label for="intFecha">Fecha de internamiento:</label>
+                <input type="date" id="intFecha" required>
+                
+                <label for="intCentro">Centro médico:</label>
+                <input type="text" id="intCentro" required>
+                
+                <label for="intDiagnostico">Diagnóstico:</label>
+                <textarea id="intDiagnostico" required></textarea>
+                
+                <div class="nav-buttons">
+                    <div>
+                        <button type="button" onclick="agregarInternamiento()">Agregar</button>
+                    </div>
+                </div>
+            </form>
+            
+            <h3>Internamientos Registrados</h3>
+            <ul id="listaInternamientos"></ul>
+            
+            <div id="mensajeGuardadoIntern" class="mensaje hidden"></div>
+            
+            <div class="nav-buttons">
+                <button onclick="cambiarPagina(3)">Anterior</button>
+                <button onclick="validarPagina4()">Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Página 5: Resumen Final -->
+        <div id="pagina5" class="hidden">
+            <h2>Resumen Final de Datos Registrados</h2>
+            
+            <div class="resumen-container">
+                <div class="resumen-section">
+                    <h3>Datos Personales</h3>
+                    <p><strong>Nombre:</strong> <span id="resumenNombre"></span></p>
+                    <p><strong>Apellido:</strong> <span id="resumenApellido"></span></p>
+                    <p><strong>Edad:</strong> <span id="resumenEdad"></span></p>
+                    <p><strong>Sexo:</strong> <span id="resumenSexo"></span></p>
+                </div>
+                
+                <div class="resumen-section">
+                    <h3>Familiares Registrados</h3>
+                    <ul id="resumenFamiliares"></ul>
+                </div>
+                
+                <div class="resumen-section">
+                    <h3>Condiciones de Salud</h3>
+                    <ul id="resumenCondiciones"></ul>
+                </div>
+                
+                <div class="resumen-section">
+                    <h3>Internamientos</h3>
+                    <ul id="resumenInternamientos"></ul>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="cambiarPagina(4)">Anterior</button>
+                <button onclick="volverAlInicio()">Volver al Inicio</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
