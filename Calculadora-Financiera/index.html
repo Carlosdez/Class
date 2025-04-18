@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Matemática Financiera</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .menu {
+            flex: 1;
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .content {
+            flex: 3;
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .formula {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .menu-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .menu-item.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Calculadora de Matemática Financiera</h1>
+        <p>Herramienta profesional para cálculos financieros</p>
+    </header>
+    
+    <div class="container">
+        <div class="menu">
+            <h3>Menú de Fórmulas</h3>
+            <div class="menu-item active" data-form="interes-simple">Interés Simple</div>
+            <div class="menu-item" data-form="monto-interes-simple">Monto con Interés Simple</div>
+            <div class="menu-item" data-form="interes-compuesto">Interés Compuesto</div>
+            <div class="menu-item" data-form="monto-interes-compuesto">Monto con Interés Compuesto</div>
+            <div class="menu-item" data-form="capital-interes-compuesto">Capital con Interés Compuesto</div>
+            <div class="menu-item" data-form="tasa-interes-compuesto">Tasa de Interés Compuesto</div>
+            <div class="menu-item" data-form="tiempo-interes-compuesto">Tiempo con Interés Compuesto</div>
+            <div class="menu-item" data-form="descuento-simple">Descuento Simple</div>
+            <div class="menu-item" data-form="tasa-descuento">Tasa de Descuento</div>
+            <div class="menu-item" data-form="valor-presente">Valor Presente</div>
+            <div class="menu-item" data-form="valor-futuro">Valor Futuro</div>
+        </div>
+        
+        <div class="content">
+            <!-- Interés Simple -->
+            <div id="interes-simple-form" class="form-content">
+                <h2>Interés Simple</h2>
+                <p class="formula">I = C × i × t</p>
+                <div class="form-group">
+                    <label for="is-capital">Capital (C):</label>
+                    <input type="number" id="is-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="is-tasa">Tasa de interés anual (i):</label>
+                    <input type="number" id="is-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="is-tiempo">Tiempo en años (t):</label>
+                    <input type="number" id="is-tiempo" step="0.01">
+                </div>
+                <button onclick="calcularInteresSimple()">Calcular Interés</button>
+                <div id="is-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El interés simple se calcula multiplicando el capital por la tasa de interés y por el tiempo.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>I = Interés</li>
+                        <li>C = Capital inicial</li>
+                        <li>i = Tasa de interés anual (en decimal)</li>
+                        <li>t = Tiempo en años</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Monto con Interés Simple -->
+            <div id="monto-interes-simple-form" class="form-content hidden">
+                <h2>Monto con Interés Simple</h2>
+                <p class="formula">M = C × (1 + i × t)</p>
+                <div class="form-group">
+                    <label for="mis-capital">Capital (C):</label>
+                    <input type="number" id="mis-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="mis-tasa">Tasa de interés anual (i):</label>
+                    <input type="number" id="mis-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="mis-tiempo">Tiempo en años (t):</label>
+                    <input type="number" id="mis-tiempo" step="0.01">
+                </div>
+                <button onclick="calcularMontoInteresSimple()">Calcular Monto</button>
+                <div id="mis-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El monto con interés simple es la suma del capital inicial más los intereses generados.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>M = Monto final</li>
+                        <li>C = Capital inicial</li>
+                        <li>i = Tasa de interés anual (en decimal)</li>
+                        <li>t = Tiempo en años</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Interés Compuesto -->
+            <div id="interes-compuesto-form" class="form-content hidden">
+                <h2>Interés Compuesto</h2>
+                <p class="formula">I = C × [(1 + i)<sup>n</sup> - 1]</p>
+                <div class="form-group">
+                    <label for="ic-capital">Capital (C):</label>
+                    <input type="number" id="ic-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="ic-tasa">Tasa de interés por período (i):</label>
+                    <input type="number" id="ic-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="ic-periodos">Número de períodos (n):</label>
+                    <input type="number" id="ic-periodos" step="1">
+                </div>
+                <button onclick="calcularInteresCompuesto()">Calcular Interés</button>
+                <div id="ic-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El interés compuesto es el interés calculado sobre el capital inicial más los intereses acumulados de períodos anteriores.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>I = Interés compuesto</li>
+                        <li>C = Capital inicial</li>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                        <li>n = Número de períodos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Monto con Interés Compuesto -->
+            <div id="monto-interes-compuesto-form" class="form-content hidden">
+                <h2>Monto con Interés Compuesto</h2>
+                <p class="formula">M = C × (1 + i)<sup>n</sup></p>
+                <div class="form-group">
+                    <label for="mic-capital">Capital (C):</label>
+                    <input type="number" id="mic-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="mic-tasa">Tasa de interés por período (i):</label>
+                    <input type="number" id="mic-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="mic-periodos">Número de períodos (n):</label>
+                    <input type="number" id="mic-periodos" step="1">
+                </div>
+                <button onclick="calcularMontoInteresCompuesto()">Calcular Monto</button>
+                <div id="mic-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El monto con interés compuesto es el capital inicial multiplicado por (1 más la tasa de interés) elevado al número de períodos.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>M = Monto final</li>
+                        <li>C = Capital inicial</li>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                        <li>n = Número de períodos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Capital con Interés Compuesto -->
+            <div id="capital-interes-compuesto-form" class="form-content hidden">
+                <h2>Capital con Interés Compuesto</h2>
+                <p class="formula">C = M / (1 + i)<sup>n</sup></p>
+                <div class="form-group">
+                    <label for="cic-monto">Monto (M):</label>
+                    <input type="number" id="cic-monto" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="cic-tasa">Tasa de interés por período (i):</label>
+                    <input type="number" id="cic-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="cic-periodos">Número de períodos (n):</label>
+                    <input type="number" id="cic-periodos" step="1">
+                </div>
+                <button onclick="calcularCapitalInteresCompuesto()">Calcular Capital</button>
+                <div id="cic-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El capital inicial se calcula dividiendo el monto final entre (1 más la tasa de interés) elevado al número de períodos.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>C = Capital inicial</li>
+                        <li>M = Monto final</li>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                        <li>n = Número de períodos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tasa de Interés Compuesto -->
+            <div id="tasa-interes-compuesto-form" class="form-content hidden">
+                <h2>Tasa de Interés Compuesto</h2>
+                <p class="formula">i = (M / C)<sup>1/n</sup> - 1</p>
+                <div class="form-group">
+                    <label for="tic-monto">Monto (M):</label>
+                    <input type="number" id="tic-monto" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="tic-capital">Capital (C):</label>
+                    <input type="number" id="tic-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="tic-periodos">Número de períodos (n):</label>
+                    <input type="number" id="tic-periodos" step="1">
+                </div>
+                <button onclick="calcularTasaInteresCompuesto()">Calcular Tasa</button>
+                <div id="tic-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>La tasa de interés por período se calcula como la raíz n-ésima del cociente entre el monto y el capital, menos uno.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                        <li>M = Monto final</li>
+                        <li>C = Capital inicial</li>
+                        <li>n = Número de períodos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tiempo con Interés Compuesto -->
+            <div id="tiempo-interes-compuesto-form" class="form-content hidden">
+                <h2>Tiempo con Interés Compuesto</h2>
+                <p class="formula">n = log(M / C) / log(1 + i)</p>
+                <div class="form-group">
+                    <label for="timeic-monto">Monto (M):</label>
+                    <input type="number" id="timeic-monto" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="timeic-capital">Capital (C):</label>
+                    <input type="number" id="timeic-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="timeic-tasa">Tasa de interés por período (i):</label>
+                    <input type="number" id="timeic-tasa" step="0.0001">
+                </div>
+                <button onclick="calcularTiempoInteresCompuesto()">Calcular Tiempo</button>
+                <div id="timeic-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El tiempo necesario se calcula como el logaritmo del cociente entre el monto y el capital, dividido por el logaritmo de (1 más la tasa de interés).</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>n = Número de períodos</li>
+                        <li>M = Monto final</li>
+                        <li>C = Capital inicial</li>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Descuento Simple -->
+            <div id="descuento-simple-form" class="form-content hidden">
+                <h2>Descuento Simple</h2>
+                <p class="formula">D = Vn × d × t</p>
+                <div class="form-group">
+                    <label for="ds-valor-nominal">Valor nominal (Vn):</label>
+                    <input type="number" id="ds-valor-nominal" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="ds-tasa-descuento">Tasa de descuento (d):</label>
+                    <input type="number" id="ds-tasa-descuento" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="ds-tiempo">Tiempo (t):</label>
+                    <input type="number" id="ds-tiempo" step="0.01">
+                </div>
+                <button onclick="calcularDescuentoSimple()">Calcular Descuento</button>
+                <div id="ds-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El descuento simple es la reducción aplicada a un valor futuro para obtener su valor presente.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>D = Descuento</li>
+                        <li>Vn = Valor nominal (valor futuro)</li>
+                        <li>d = Tasa de descuento (en decimal)</li>
+                        <li>t = Tiempo</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tasa de Descuento -->
+            <div id="tasa-descuento-form" class="form-content hidden">
+                <h2>Tasa de Descuento</h2>
+                <p class="formula">d = D / (Vn × t)</p>
+                <div class="form-group">
+                    <label for="td-descuento">Descuento (D):</label>
+                    <input type="number" id="td-descuento" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="td-valor-nominal">Valor nominal (Vn):</label>
+                    <input type="number" id="td-valor-nominal" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="td-tiempo">Tiempo (t):</label>
+                    <input type="number" id="td-tiempo" step="0.01">
+                </div>
+                <button onclick="calcularTasaDescuento()">Calcular Tasa</button>
+                <div id="td-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>La tasa de descuento es el descuento dividido por el producto del valor nominal y el tiempo.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>d = Tasa de descuento (en decimal)</li>
+                        <li>D = Descuento</li>
+                        <li>Vn = Valor nominal (valor futuro)</li>
+                        <li>t = Tiempo</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Valor Presente -->
+            <div id="valor-presente-form" class="form-content hidden">
+                <h2>Valor Presente</h2>
+                <p class="formula">VP = VF / (1 + i)<sup>n</sup></p>
+                <div class="form-group">
+                    <label for="vp-valor-futuro">Valor futuro (VF):</label>
+                    <input type="number" id="vp-valor-futuro" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="vp-tasa">Tasa de interés (i):</label>
+                    <input type="number" id="vp-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="vp-periodos">Número de períodos (n):</label>
+                    <input type="number" id="vp-periodos" step="1">
+                </div>
+                <button onclick="calcularValorPresente()">Calcular Valor Presente</button>
+                <div id="vp-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El valor presente es el valor actual de una cantidad futura, descontada a una tasa de interés específica.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>VP = Valor presente</li>
+                        <li>VF = Valor futuro</li>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                        <li>n = Número de períodos</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Valor Futuro -->
+            <div id="valor-futuro-form" class="form-content hidden">
+                <h2>Valor Futuro</h2>
+                <p class="formula">VF = VP × (1 + i)<sup>n</sup></p>
+                <div class="form-group">
+                    <label for="vf-valor-presente">Valor presente (VP):</label>
+                    <input type="number" id="vf-valor-presente" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="vf-tasa">Tasa de interés (i):</label>
+                    <input type="number" id="vf-tasa" step="0.0001">
+                </div>
+                <div class="form-group">
+                    <label for="vf-periodos">Número de períodos (n):</label>
+                    <input type="number" id="vf-periodos" step="1">
+                </div>
+                <button onclick="calcularValorFuturo()">Calcular Valor Futuro</button>
+                <div id="vf-result" class="result hidden"></div>
+                <div class="explanation">
+                    <p>El valor futuro es el valor de un activo en una fecha futura basado en una tasa de crecimiento asumida.</p>
+                    <p>Donde:</p>
+                    <ul>
+                        <li>VF = Valor futuro</li>
+                        <li>VP = Valor presente</li>
+                        <li>i = Tasa de interés por período (en decimal)</li>
+                        <li>n = Número de períodos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para cambiar entre formularios
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remover clase active de todos los items
+                document.querySelectorAll('.menu-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Agregar clase active al item clickeado
+                this.classList.add('active');
+                
+                // Ocultar todos los formularios
+                document.querySelectorAll('.form-content').forEach(form => {
+                    form.classList.add('hidden');
+                });
+                
+                // Mostrar el formulario correspondiente
+                const formId = this.getAttribute('data-form') + '-form';
+                document.getElementById(formId).classList.remove('hidden');
+            });
+        });
+        
+        // Funciones de cálculo
+        
+        function calcularInteresSimple() {
+            const capital = parseFloat(document.getElementById('is-capital').value);
+            const tasa = parseFloat(document.getElementById('is-tasa').value) / 100;
+            const tiempo = parseFloat(document.getElementById('is-tiempo').value);
+            
+            const interes = capital * tasa * tiempo;
+            
+            const resultDiv = document.getElementById('is-result');
+            resultDiv.innerHTML = `
+                <p><strong>Interés Simple:</strong> $${interes.toFixed(2)}</p>
+                <p>Fórmula aplicada: I = C × i × t = ${capital} × ${tasa} × ${tiempo} = ${interes.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularMontoInteresSimple() {
+            const capital = parseFloat(document.getElementById('mis-capital').value);
+            const tasa = parseFloat(document.getElementById('mis-tasa').value) / 100;
+            const tiempo = parseFloat(document.getElementById('mis-tiempo').value);
+            
+            const monto = capital * (1 + tasa * tiempo);
+            
+            const resultDiv = document.getElementById('mis-result');
+            resultDiv.innerHTML = `
+                <p><strong>Monto con Interés Simple:</strong> $${monto.toFixed(2)}</p>
+                <p>Fórmula aplicada: M = C × (1 + i × t) = ${capital} × (1 + ${tasa} × ${tiempo}) = ${monto.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularInteresCompuesto() {
+            const capital = parseFloat(document.getElementById('ic-capital').value);
+            const tasa = parseFloat(document.getElementById('ic-tasa').value) / 100;
+            const periodos = parseFloat(document.getElementById('ic-periodos').value);
+            
+            const interes = capital * (Math.pow(1 + tasa, periodos) - 1);
+            
+            const resultDiv = document.getElementById('ic-result');
+            resultDiv.innerHTML = `
+                <p><strong>Interés Compuesto:</strong> $${interes.toFixed(2)}</p>
+                <p>Fórmula aplicada: I = C × [(1 + i)<sup>n</sup> - 1] = ${capital} × [(1 + ${tasa})<sup>${periodos}</sup> - 1] = ${interes.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularMontoInteresCompuesto() {
+            const capital = parseFloat(document.getElementById('mic-capital').value);
+            const tasa = parseFloat(document.getElementById('mic-tasa').value) / 100;
+            const periodos = parseFloat(document.getElementById('mic-periodos').value);
+            
+            const monto = capital * Math.pow(1 + tasa, periodos);
+            
+            const resultDiv = document.getElementById('mic-result');
+            resultDiv.innerHTML = `
+                <p><strong>Monto con Interés Compuesto:</strong> $${monto.toFixed(2)}</p>
+                <p>Fórmula aplicada: M = C × (1 + i)<sup>n</sup> = ${capital} × (1 + ${tasa})<sup>${periodos}</sup> = ${monto.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularCapitalInteresCompuesto() {
+            const monto = parseFloat(document.getElementById('cic-monto').value);
+            const tasa = parseFloat(document.getElementById('cic-tasa').value) / 100;
+            const periodos = parseFloat(document.getElementById('cic-periodos').value);
+            
+            const capital = monto / Math.pow(1 + tasa, periodos);
+            
+            const resultDiv = document.getElementById('cic-result');
+            resultDiv.innerHTML = `
+                <p><strong>Capital Inicial:</strong> $${capital.toFixed(2)}</p>
+                <p>Fórmula aplicada: C = M / (1 + i)<sup>n</sup> = ${monto} / (1 + ${tasa})<sup>${periodos}</sup> = ${capital.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularTasaInteresCompuesto() {
+            const monto = parseFloat(document.getElementById('tic-monto').value);
+            const capital = parseFloat(document.getElementById('tic-capital').value);
+            const periodos = parseFloat(document.getElementById('tic-periodos').value);
+            
+            const tasa = Math.pow(monto / capital, 1 / periodos) - 1;
+            
+            const resultDiv = document.getElementById('tic-result');
+            resultDiv.innerHTML = `
+                <p><strong>Tasa de Interés por Período:</strong> ${(tasa * 100).toFixed(4)}%</p>
+                <p><strong>Tasa Anual (si el período es anual):</strong> ${(tasa * 100).toFixed(4)}%</p>
+                <p>Fórmula aplicada: i = (M / C)<sup>1/n</sup> - 1 = (${monto} / ${capital})<sup>1/${periodos}</sup> - 1 = ${tasa.toFixed(6)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularTiempoInteresCompuesto() {
+            const monto = parseFloat(document.getElementById('timeic-monto').value);
+            const capital = parseFloat(document.getElementById('timeic-capital').value);
+            const tasa = parseFloat(document.getElementById('timeic-tasa').value) / 100;
+            
+            const tiempo = Math.log(monto / capital) / Math.log(1 + tasa);
+            
+            const resultDiv = document.getElementById('timeic-result');
+            resultDiv.innerHTML = `
+                <p><strong>Tiempo necesario:</strong> ${tiempo.toFixed(2)} períodos</p>
+                <p>Fórmula aplicada: n = log(M / C) / log(1 + i) = log(${monto} / ${capital}) / log(1 + ${tasa}) = ${tiempo.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularDescuentoSimple() {
+            const valorNominal = parseFloat(document.getElementById('ds-valor-nominal').value);
+            const tasaDescuento = parseFloat(document.getElementById('ds-tasa-descuento').value) / 100;
+            const tiempo = parseFloat(document.getElementById('ds-tiempo').value);
+            
+            const descuento = valorNominal * tasaDescuento * tiempo;
+            
+            const resultDiv = document.getElementById('ds-result');
+            resultDiv.innerHTML = `
+                <p><strong>Descuento Simple:</strong> $${descuento.toFixed(2)}</p>
+                <p><strong>Valor Actual:</strong> $${(valorNominal - descuento).toFixed(2)}</p>
+                <p>Fórmula aplicada: D = Vn × d × t = ${valorNominal} × ${tasaDescuento} × ${tiempo} = ${descuento.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularTasaDescuento() {
+            const descuento = parseFloat(document.getElementById('td-descuento').value);
+            const valorNominal = parseFloat(document.getElementById('td-valor-nominal').value);
+            const tiempo = parseFloat(document.getElementById('td-tiempo').value);
+            
+            const tasaDescuento = descuento / (valorNominal * tiempo);
+            
+            const resultDiv = document.getElementById('td-result');
+            resultDiv.innerHTML = `
+                <p><strong>Tasa de Descuento:</strong> ${(tasaDescuento * 100).toFixed(4)}%</p>
+                <p>Fórmula aplicada: d = D / (Vn × t) = ${descuento} / (${valorNominal} × ${tiempo}) = ${tasaDescuento.toFixed(6)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularValorPresente() {
+            const valorFuturo = parseFloat(document.getElementById('vp-valor-futuro').value);
+            const tasa = parseFloat(document.getElementById('vp-tasa').value) / 100;
+            const periodos = parseFloat(document.getElementById('vp-periodos').value);
+            
+            const valorPresente = valorFuturo / Math.pow(1 + tasa, periodos);
+            
+            const resultDiv = document.getElementById('vp-result');
+            resultDiv.innerHTML = `
+                <p><strong>Valor Presente:</strong> $${valorPresente.toFixed(2)}</p>
+                <p>Fórmula aplicada: VP = VF / (1 + i)<sup>n</sup> = ${valorFuturo} / (1 + ${tasa})<sup>${periodos}</sup> = ${valorPresente.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+        
+        function calcularValorFuturo() {
+            const valorPresente = parseFloat(document.getElementById('vf-valor-presente').value);
+            const tasa = parseFloat(document.getElementById('vf-tasa').value) / 100;
+            const periodos = parseFloat(document.getElementById('vf-periodos').value);
+            
+            const valorFuturo = valorPresente * Math.pow(1 + tasa, periodos);
+            
+            const resultDiv = document.getElementById('vf-result');
+            resultDiv.innerHTML = `
+                <p><strong>Valor Futuro:</strong> $${valorFuturo.toFixed(2)}</p>
+                <p>Fórmula aplicada: VF = VP × (1 + i)<sup>n</sup> = ${valorPresente} × (1 + ${tasa})<sup>${periodos}</sup> = ${valorFuturo.toFixed(2)}</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
