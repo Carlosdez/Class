@@ -39,6 +39,8 @@
             border-radius: 5px;
             padding: 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .content {
@@ -47,6 +49,8 @@
             border-radius: 5px;
             padding: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         .form-group {
@@ -76,6 +80,8 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
         
         button:hover {
@@ -123,6 +129,49 @@
             font-size: 0.9em;
             color: #666;
         }
+        
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .payment-table th, .payment-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .payment-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .payment-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .payment-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .payment-inputs .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .payment-record {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        
+        .payment-buttons {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -145,15 +194,18 @@
             <div class="menu-item" data-form="tasa-descuento">Tasa de Descuento</div>
             <div class="menu-item" data-form="valor-presente">Valor Presente</div>
             <div class="menu-item" data-form="valor-futuro">Valor Futuro</div>
+            <div class="menu-item" data-form="ecuaciones-valor">Ecuaciones de Valor</div>
+            <div class="menu-item" data-form="regla-saldos">Regla de los Saldos</div>
+            <div class="menu-item" data-form="pagos-parciales">Pagos Parciales</div>
         </div>
         
         <div class="content">
             <!-- Interés Simple -->
             <div id="interes-simple-form" class="form-content">
                 <h2>Interés Simple</h2>
-                <p class="formula">I = C × i × t</p>
+                <p class="formula">I = P × i × t</p>
                 <div class="form-group">
-                    <label for="is-capital">Capital (C):</label>
+                    <label for="is-capital">Capital (P):</label>
                     <input type="number" id="is-capital" step="0.01">
                 </div>
                 <div class="form-group">
@@ -171,7 +223,7 @@
                     <p>Donde:</p>
                     <ul>
                         <li>I = Interés</li>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>i = Tasa de interés anual (en decimal)</li>
                         <li>t = Tiempo en años</li>
                     </ul>
@@ -181,9 +233,9 @@
             <!-- Monto con Interés Simple -->
             <div id="monto-interes-simple-form" class="form-content hidden">
                 <h2>Monto con Interés Simple</h2>
-                <p class="formula">M = C × (1 + i × t)</p>
+                <p class="formula">M = P × (1 + i × t)</p>
                 <div class="form-group">
-                    <label for="mis-capital">Capital (C):</label>
+                    <label for="mis-capital">Capital (P):</label>
                     <input type="number" id="mis-capital" step="0.01">
                 </div>
                 <div class="form-group">
@@ -194,14 +246,14 @@
                     <label for="mis-tiempo">Tiempo en años (t):</label>
                     <input type="number" id="mis-tiempo" step="0.01">
                 </div>
-                <button onclick="calcularMontoInteresSimple()">Calcular Monto</button>
+                <button onclick="calcularMon.Debugger: . . . toInteresSimple()">Calcular Monto</button>
                 <div id="mis-result" class="result hidden"></div>
                 <div class="explanation">
                     <p>El monto con interés simple es la suma del capital inicial más los intereses generados.</p>
                     <p>Donde:</p>
                     <ul>
                         <li>M = Monto final</li>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>i = Tasa de interés anual (en decimal)</li>
                         <li>t = Tiempo en años</li>
                     </ul>
@@ -211,9 +263,9 @@
             <!-- Interés Compuesto -->
             <div id="interes-compuesto-form" class="form-content hidden">
                 <h2>Interés Compuesto</h2>
-                <p class="formula">I = C × [(1 + i)<sup>n</sup> - 1]</p>
+                <p class="formula">I = P × [(1 + i)<sup>n</sup> - 1]</p>
                 <div class="form-group">
-                    <label for="ic-capital">Capital (C):</label>
+                    <label for="ic-capital">Capital (P):</label>
                     <input type="number" id="ic-capital" step="0.01">
                 </div>
                 <div class="form-group">
@@ -231,7 +283,7 @@
                     <p>Donde:</p>
                     <ul>
                         <li>I = Interés compuesto</li>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>i = Tasa de interés por período (en decimal)</li>
                         <li>n = Número de períodos</li>
                     </ul>
@@ -241,9 +293,9 @@
             <!-- Monto con Interés Compuesto -->
             <div id="monto-interes-compuesto-form" class="form-content hidden">
                 <h2>Monto con Interés Compuesto</h2>
-                <p class="formula">M = C × (1 + i)<sup>n</sup></p>
+                <p class="formula">M = P × (1 + i)<sup>n</sup></p>
                 <div class="form-group">
-                    <label for="mic-capital">Capital (C):</label>
+                    <label for="mic-capital">Capital (P):</label>
                     <input type="number" id="mic-capital" step="0.01">
                 </div>
                 <div class="form-group">
@@ -261,7 +313,7 @@
                     <p>Donde:</p>
                     <ul>
                         <li>M = Monto final</li>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>i = Tasa de interés por período (en decimal)</li>
                         <li>n = Número de períodos</li>
                     </ul>
@@ -271,7 +323,7 @@
             <!-- Capital con Interés Compuesto -->
             <div id="capital-interes-compuesto-form" class="form-content hidden">
                 <h2>Capital con Interés Compuesto</h2>
-                <p class="formula">C = M / (1 + i)<sup>n</sup></p>
+                <p class="formula">P = M / (1 + i)<sup>n</sup></p>
                 <div class="form-group">
                     <label for="cic-monto">Monto (M):</label>
                     <input type="number" id="cic-monto" step="0.01">
@@ -290,7 +342,7 @@
                     <p>El capital inicial se calcula dividiendo el monto final entre (1 más la tasa de interés) elevado al número de períodos.</p>
                     <p>Donde:</p>
                     <ul>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>M = Monto final</li>
                         <li>i = Tasa de interés por período (en decimal)</li>
                         <li>n = Número de períodos</li>
@@ -301,13 +353,13 @@
             <!-- Tasa de Interés Compuesto -->
             <div id="tasa-interes-compuesto-form" class="form-content hidden">
                 <h2>Tasa de Interés Compuesto</h2>
-                <p class="formula">i = (M / C)<sup>1/n</sup> - 1</p>
+                <p class="formula">i = (M / P)<sup>1/n</sup> - 1</p>
                 <div class="form-group">
                     <label for="tic-monto">Monto (M):</label>
                     <input type="number" id="tic-monto" step="0.01">
                 </div>
                 <div class="form-group">
-                    <label for="tic-capital">Capital (C):</label>
+                    <label for="tic-capital">Capital (P):</label>
                     <input type="number" id="tic-capital" step="0.01">
                 </div>
                 <div class="form-group">
@@ -322,7 +374,7 @@
                     <ul>
                         <li>i = Tasa de interés por período (en decimal)</li>
                         <li>M = Monto final</li>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>n = Número de períodos</li>
                     </ul>
                 </div>
@@ -331,13 +383,13 @@
             <!-- Tiempo con Interés Compuesto -->
             <div id="tiempo-interes-compuesto-form" class="form-content hidden">
                 <h2>Tiempo con Interés Compuesto</h2>
-                <p class="formula">n = log(M / C) / log(1 + i)</p>
+                <p class="formula">n = log(M / P) /'informations log(1 + i)</p>
                 <div class="form-group">
                     <label for="timeic-monto">Monto (M):</label>
                     <input type="number" id="timeic-monto" step="0.01">
                 </div>
                 <div class="form-group">
-                    <label for="timeic-capital">Capital (C):</label>
+                    <label for="timeic-capital">Capital (P):</label>
                     <input type="number" id="timeic-capital" step="0.01">
                 </div>
                 <div class="form-group">
@@ -352,7 +404,7 @@
                     <ul>
                         <li>n = Número de períodos</li>
                         <li>M = Monto final</li>
-                        <li>C = Capital inicial</li>
+                        <li>P = Capital inicial</li>
                         <li>i = Tasa de interés por período (en decimal)</li>
                     </ul>
                 </div>
@@ -477,10 +529,194 @@
                     </ul>
                 </div>
             </div>
+            
+            <!-- Ecuaciones de Valor -->
+            <div id="ecuaciones-valor-form" class="form-content hidden">
+                <h2>Ecuaciones de Valor</h2>
+                <p class="formula">Σ Pagos = Σ Deudas (en fecha focal)</p>
+                
+                <div id="ev-deudas-container">
+                    <h3>Deudas</h3>
+                    <div class="payment-inputs">
+                        <div class="form-group">
+                            <label for="ev-deuda-monto">Monto:</label>
+                            <input type="number" id="ev-deuda-monto" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="ev-deuda-fecha">Fecha de vencimiento:</label>
+                            <input type="date" id="ev-deuda-fecha">
+                        </div>
+                        <button onclick="agregarDeuda()">Agregar Deuda</button>
+                    </div>
+                    <div id="ev-deudas-list"></div>
+                </div>
+                
+                <div id="ev-pagos-container" style="margin-top: 30px;">
+                    <h3>Pagos</h3>
+                    <div class="payment-inputs">
+                        <div class="form-group">
+                            <label for="ev-pago-monto">Monto:</label>
+                            <input type="number" id="ev-pago-monto" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="ev-pago-fecha">Fecha de pago:</label>
+                            <input type="date" id="ev-pago-fecha">
+                        </div>
+                        <button onclick="agregarPago()">Agregar Pago</button>
+                    </div>
+                    <div id="ev-pagos-list"></div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <div class="form-group">
+                        <label for="ev-fecha-focal">Fecha focal:</label>
+                        <input type="date" id="ev-fecha-focal">
+                    </div>
+                    <div class="form-group">
+                        <label for="ev-tasa">Tasa de interés anual (%):</label>
+                        <input type="number" id="ev-tasa" step="0.01">
+                    </div>
+                    <button onclick="calcularEcuacionValor()">Calcular Ecuación de Valor</button>
+                    <div id="ev-result" class="result hidden"></div>
+                </div>
+                
+                <div class="explanation">
+                    <p>Las ecuaciones de valor permiten igualar los pagos y las deudas en una fecha determinada (fecha focal).</p>
+                    <p>Pasos:</p>
+                    <ol>
+                        <li>Llevar todas las deudas a la fecha focal</li>
+                        <li>Llevar todos los pagos a la fecha focal</li>
+                        <li>Igualar la suma de deudas con la suma de pagos</li>
+                        <li>Resolver para la incógnita requerida</li>
+                    </ol>
+                    <p>Fórmulas utilizadas:</p>
+                    <ul>
+                        <li>Para valores antes de la fecha focal: Valor en fecha focal = Valor × (1 + i)<sup>t</sup></li>
+                        <li>Para valores después de la fecha focal: Valor en fecha focal = Valor / (1 + i)<sup>t</sup></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Regla de los Saldos -->
+            <div id="regla-saldos-form" class="form-content hidden">
+                <h2>Regla de los Saldos</h2>
+                <p class="formula">Saldo = Capital - Σ Pagos + Σ Intereses</p>
+                
+                <div class="form-group">
+                    <label for="rs-capital">Capital inicial (P):</label>
+                    <input type="number" id="rs-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="rs-tasa">Tasa de interés anual (%):</label>
+                    <input type="number" id="rs-tasa" step="0.01">
+                </div>
+                
+                <div id="rs-pagos-container" style="margin-top:  axis: 20px;">
+                    <h3>Pagos realizados</h3>
+                    <div class="payment-inputs">
+                        <div class="form-group">
+                            <label for="rs-pago-monto">Monto:</label>
+                            <input type="number" id="rs-pago-monto" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="rs-pago-fecha">Fecha de pago:</label>
+                            <input type="date" id="rs-pago-fecha">
+                        </div>
+                        <button onclick="agregarPagoReglaSaldos()">Agregar Pago</button>
+                    </div>
+                    <div id="rs-pagos-list"></div>
+                </div>
+                
+                <button onclick="calcularReglaSaldos()">Calcular Saldos</button>
+                <div id="rs-result" class="result hidden"></div>
+                
+                <div class="explanation">
+                    <p>La regla de los saldos permite calcular el saldo de una deuda considerando los pagos parciales realizados.</p>
+                    <p>Pasos:</p>
+                    <ol>
+                        <li>Ordenar los pagos cronológicamente</li>
+                        <li>Calcular los intereses entre cada pago</li>
+                        <li>Aplicar cada pago primero a los intereses y luego al capital</li>
+                        <li>Actualizar el saldo después de cada pago</li>
+                    </ol>
+                    <p>Fórmulas utilizadas:</p>
+                    <ul>
+                        <li>Intereses = Saldo anterior × tasa × tiempo</li>
+                        <li>Nuevo saldo = Saldo anterior + Intereses - Pago</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Pagos Parciales -->
+            <div id="pagos-parciales-form" class="form-content hidden">
+                <h2>Pagos Parciales</h2>
+                
+                <div class="form-group">
+                    <label for="pp-capital">Capital inicial (P):</label>
+                    <input type="number" id="pp-capital" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="pp-tasa">Tasa de interés anual (%):</label>
+                    <input type="number" id="pp-tasa" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="pp-fecha-inicio">Fecha de inicio:</label>
+                    <input type="date" id="pp-fecha-inicio">
+                </div>
+                
+                <div id="pp-pagos-container" style="margin-top: 20px;">
+                    <h3>Pagos realizados</h3>
+                    <div class="payment-inputs">
+                        <div class="form-group">
+                            <label for="pp-pago-monto">Monto:</label>
+                            <input type="number" id="pp-pago-monto" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="pp-pago-fecha">Fecha de pago:</label>
+                            <input type="date" id="pp-pago-fecha">
+                        </div>
+                        <button onclick="agregarPagoParcial()">Agregar Pago</button>
+                    </div>
+                    <div id="pp-pagos-list"></div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <label>Método de cálculo:</label>
+                    <div>
+                        <button onclick="calcularPagosParciales('sauerbeck')">Método de Sauerbeck</button>
+                        <button onclick="calcularPagosParciales('horas')">Método de Horas</button>
+                    </div>
+                </div>
+                
+                <div id="pp-result" class="result hidden"></div>
+                
+                <div class="explanation">
+                    <p>Existen diferentes métodos para calcular el saldo de una deuda con pagos parciales:</p>
+                    
+                    <h4>Método de Sauerbeck</h4>
+                    <p>1. Calcular el monto total de la deuda hasta la fecha del último pago</p>
+                    <p>2. Restar el total de pagos realizados</p>
+                    <p>3. El resultado es el saldo insoluto</p>
+                    
+                    <h4>Método de Horas</h4>
+                    <p>1. Aplicar cada pago al capital más los intereses acumulados hasta la fecha del pago</p>
+                    <p>2. Calcular el nuevo saldo después de cada pago</p>
+                    <p>3. Continuar hasta el último pago</p>
+                    
+                    <p>Fórmula general para intereses entre pagos:</p>
+                    <p class="formula">I = P × i × t</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Variables globales para almacenar pagos y deudas
+        let deudas = [];
+        let pagos = [];
+        let pagosReglaSaldos = [];
+        let pagosParciales = [];
+
         // Función para cambiar entre formularios
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', function() {
@@ -488,187 +724,721 @@
                 document.querySelectorAll('.menu-item').forEach(i => {
                     i.classList.remove('active');
                 });
-                
+
                 // Agregar clase active al item clickeado
                 this.classList.add('active');
-                
+
                 // Ocultar todos los formularios
                 document.querySelectorAll('.form-content').forEach(form => {
                     form.classList.add('hidden');
                 });
-                
+
                 // Mostrar el formulario correspondiente
                 const formId = this.getAttribute('data-form') + '-form';
                 document.getElementById(formId).classList.remove('hidden');
             });
         });
-        
+
+        // Funciones auxiliares
+        function validateInputs(inputs) {
+            return inputs.every(input => input.value && !isNaN(parseFloat(input.value)) && parseFloat(input.value) >= 0);
+        }
+
+        function showError(resultDiv, message) {
+            resultDiv.innerHTML = `<p style="color: red;">${message}</p>`;
+            resultDiv.classList.remove('hidden');
+        }
+
+        function daysBetweenDates(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000;
+            return Math.abs((new Date(date2) - new Date(date1)) / oneDay);
+        }
+
         // Funciones de cálculo
-        
+
         function calcularInteresSimple() {
-            const capital = parseFloat(document.getElementById('is-capital').value);
-            const tasa = parseFloat(document.getElementById('is-tasa').value) / 100;
-            const tiempo = parseFloat(document.getElementById('is-tiempo').value);
-            
-            const interes = capital * tasa * tiempo;
-            
+            const inputs = [
+                document.getElementById('is-capital'),
+                document.getElementById('is-tasa'),
+                document.getElementById('is-tiempo')
+            ];
             const resultDiv = document.getElementById('is-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const capital = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const tiempo = parseFloat(inputs[2].value);
+
+            const interes = capital * tasa * tiempo;
+
             resultDiv.innerHTML = `
                 <p><strong>Interés Simple:</strong> $${interes.toFixed(2)}</p>
-                <p>Fórmula aplicada: I = C × i × t = ${capital} × ${tasa} × ${tiempo} = ${interes.toFixed(2)}</p>
+                <p>Fórmula aplicada: I = P × i × t = ${capital} × ${tasa} × ${tiempo} = ${interes.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularMontoInteresSimple() {
-            const capital = parseFloat(document.getElementById('mis-capital').value);
-            const tasa = parseFloat(document.getElementById('mis-tasa').value) / 100;
-            const tiempo = parseFloat(document.getElementById('mis-tiempo').value);
-            
-            const monto = capital * (1 + tasa * tiempo);
-            
+            const inputs = [
+                document.getElementById('mis-capital'),
+                document.getElementById('mis-tasa'),
+                document.getElementById('mis-tiempo')
+            ];
             const resultDiv = document.getElementById('mis-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const capital = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const tiempo = parseFloat(inputs[2].value);
+
+            const monto = capital * (1 + tasa * tiempo);
+
             resultDiv.innerHTML = `
                 <p><strong>Monto con Interés Simple:</strong> $${monto.toFixed(2)}</p>
-                <p>Fórmula aplicada: M = C × (1 + i × t) = ${capital} × (1 + ${tasa} × ${tiempo}) = ${monto.toFixed(2)}</p>
+                <p>Fórmula aplicada: M = P × (1 + i × t) = ${capital} × (1 + ${tasa} × ${tiempo}) = ${monto.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularInteresCompuesto() {
-            const capital = parseFloat(document.getElementById('ic-capital').value);
-            const tasa = parseFloat(document.getElementById('ic-tasa').value) / 100;
-            const periodos = parseFloat(document.getElementById('ic-periodos').value);
-            
-            const interes = capital * (Math.pow(1 + tasa, periodos) - 1);
-            
+            const inputs = [
+                document.getElementById('ic-capital'),
+                document.getElementById('ic-tasa'),
+                document.getElementById('ic-periodos')
+            ];
             const resultDiv = document.getElementById('ic-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const capital = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const periodos = parseInt(inputs[2].value);
+
+            const interes = capital * (Math.pow(1 + tasa, periodos) - 1);
+
             resultDiv.innerHTML = `
                 <p><strong>Interés Compuesto:</strong> $${interes.toFixed(2)}</p>
-                <p>Fórmula aplicada: I = C × [(1 + i)<sup>n</sup> - 1] = ${capital} × [(1 + ${tasa})<sup>${periodos}</sup> - 1] = ${interes.toFixed(2)}</p>
+                <p>Fórmula aplicada: I = P × [(1 + i)<sup>n</sup> - 1] = ${capital} × [(1 + ${tasa})<sup>${periodos}</sup> - 1] = ${interes.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularMontoInteresCompuesto() {
-            const capital = parseFloat(document.getElementById('mic-capital').value);
-            const tasa = parseFloat(document.getElementById('mic-tasa').value) / 100;
-            const periodos = parseFloat(document.getElementById('mic-periodos').value);
-            
-            const monto = capital * Math.pow(1 + tasa, periodos);
-            
+            const inputs = [
+                document.getElementById('mic-capital'),
+                document.getElementById('mic-tasa'),
+                document.getElementById('mic-periodos')
+            ];
             const resultDiv = document.getElementById('mic-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const capital = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const periodos = parseInt(inputs[2].value);
+
+            const monto = capital * Math.pow(1 + tasa, periodos);
+
             resultDiv.innerHTML = `
                 <p><strong>Monto con Interés Compuesto:</strong> $${monto.toFixed(2)}</p>
-                <p>Fórmula aplicada: M = C × (1 + i)<sup>n</sup> = ${capital} × (1 + ${tasa})<sup>${periodos}</sup> = ${monto.toFixed(2)}</p>
+                <p>Fórmula aplicada: M = P × (1 + i)<sup>n</sup> = ${capital} × (1 + ${tasa})<sup>${periodos}</sup> = ${monto.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularCapitalInteresCompuesto() {
-            const monto = parseFloat(document.getElementById('cic-monto').value);
-            const tasa = parseFloat(document.getElementById('cic-tasa').value) / 100;
-            const periodos = parseFloat(document.getElementById('cic-periodos').value);
-            
-            const capital = monto / Math.pow(1 + tasa, periodos);
-            
+            const inputs = [
+                document.getElementById('cic-monto'),
+                document.getElementById('cic-tasa'),
+                document.getElementById('cic-periodos')
+            ];
             const resultDiv = document.getElementById('cic-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const monto = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const periodos = parseInt(inputs[2].value);
+
+            const capital = monto / Math.pow(1 + tasa, periodos);
+
             resultDiv.innerHTML = `
                 <p><strong>Capital Inicial:</strong> $${capital.toFixed(2)}</p>
-                <p>Fórmula aplicada: C = M / (1 + i)<sup>n</sup> = ${monto} / (1 + ${tasa})<sup>${periodos}</sup> = ${capital.toFixed(2)}</p>
+                <p>Fórmula aplicada: P = M / (1 + i)<sup>n</sup> = ${monto} / (1 + ${tasa})<sup>${periodos}</sup> = ${capital.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularTasaInteresCompuesto() {
-            const monto = parseFloat(document.getElementById('tic-monto').value);
-            const capital = parseFloat(document.getElementById('tic-capital').value);
-            const periodos = parseFloat(document.getElementById('tic-periodos').value);
-            
-            const tasa = Math.pow(monto / capital, 1 / periodos) - 1;
-            
+            const inputs = [
+                document.getElementById('tic-monto'),
+                document.getElementById('tic-capital'),
+                document.getElementById('tic-periodos')
+            ];
             const resultDiv = document.getElementById('tic-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const monto = parseFloat(inputs[0].value);
+            const capital = parseFloat(inputs[1].value);
+            const periodos = parseInt(inputs[2].value);
+
+            const tasa = Math.pow(monto / capital, 1 / periodos) - 1;
+
             resultDiv.innerHTML = `
                 <p><strong>Tasa de Interés por Período:</strong> ${(tasa * 100).toFixed(4)}%</p>
-                <p><strong>Tasa Anual (si el período es anual):</strong> ${(tasa * 100).toFixed(4)}%</p>
-                <p>Fórmula aplicada: i = (M / C)<sup>1/n</sup> - 1 = (${monto} / ${capital})<sup>1/${periodos}</sup> - 1 = ${tasa.toFixed(6)}</p>
+                <p>Fórmula aplicada: i = (M / P)<sup>1/n</sup> - 1 = (${monto} / ${capital})<sup>1/${periodos}</sup> - 1 = ${tasa.toFixed(4)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularTiempoInteresCompuesto() {
-            const monto = parseFloat(document.getElementById('timeic-monto').value);
-            const capital = parseFloat(document.getElementById('timeic-capital').value);
-            const tasa = parseFloat(document.getElementById('timeic-tasa').value) / 100;
-            
-            const tiempo = Math.log(monto / capital) / Math.log(1 + tasa);
-            
+            const inputs = [
+                document.getElementById('timeic-monto'),
+                document.getElementById('timeic-capital'),
+                document.getElementById('timeic-tasa')
+            ];
             const resultDiv = document.getElementById('timeic-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const monto = parseFloat(inputs[0].value);
+            const capital = parseFloat(inputs[1].value);
+            const tasa = parseFloat(inputs[2].value) / 100;
+
+            const tiempo = Math.log(monto / capital) / Math.log(1 + tasa);
+
             resultDiv.innerHTML = `
-                <p><strong>Tiempo necesario:</strong> ${tiempo.toFixed(2)} períodos</p>
-                <p>Fórmula aplicada: n = log(M / C) / log(1 + i) = log(${monto} / ${capital}) / log(1 + ${tasa}) = ${tiempo.toFixed(2)}</p>
+                <p><strong>Tiempo (Períodos):</strong> ${tiempo.toFixed(2)}</p>
+                <p>Fórmula aplicada: n = log(M / P) / log(1 + i) = log(${monto} / ${capital}) / log(1 + ${tasa}) = ${tiempo.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularDescuentoSimple() {
-            const valorNominal = parseFloat(document.getElementById('ds-valor-nominal').value);
-            const tasaDescuento = parseFloat(document.getElementById('ds-tasa-descuento').value) / 100;
-            const tiempo = parseFloat(document.getElementById('ds-tiempo').value);
-            
-            const descuento = valorNominal * tasaDescuento * tiempo;
-            
+            const inputs = [
+                document.getElementById('ds-valor-nominal'),
+                document.getElementById('ds-tasa-descuento'),
+                document.getElementById('ds-tiempo')
+            ];
             const resultDiv = document.getElementById('ds-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const valorNominal = parseFloat(inputs[0].value);
+            const tasaDescuento = parseFloat(inputs[1].value) / 100;
+            const tiempo = parseFloat(inputs[2].value);
+
+            const descuento = valorNominal * tasaDescuento * tiempo;
+
             resultDiv.innerHTML = `
                 <p><strong>Descuento Simple:</strong> $${descuento.toFixed(2)}</p>
-                <p><strong>Valor Actual:</strong> $${(valorNominal - descuento).toFixed(2)}</p>
                 <p>Fórmula aplicada: D = Vn × d × t = ${valorNominal} × ${tasaDescuento} × ${tiempo} = ${descuento.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularTasaDescuento() {
-            const descuento = parseFloat(document.getElementById('td-descuento').value);
-            const valorNominal = parseFloat(document.getElementById('td-valor-nominal').value);
-            const tiempo = parseFloat(document.getElementById('td-tiempo').value);
-            
-            const tasaDescuento = descuento / (valorNominal * tiempo);
-            
+            const inputs = [
+                document.getElementById('td-descuento'),
+                document.getElementById('td-valor-nominal'),
+                document.getElementById('td-tiempo')
+            ];
             const resultDiv = document.getElementById('td-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const descuento = parseFloat(inputs[0].value);
+            const valorNominal = parseFloat(inputs[1].value);
+            const tiempo = parseFloat(inputs[2].value);
+
+            const tasaDescuento = descuento / (valorNominal * tiempo);
+
             resultDiv.innerHTML = `
                 <p><strong>Tasa de Descuento:</strong> ${(tasaDescuento * 100).toFixed(4)}%</p>
-                <p>Fórmula aplicada: d = D / (Vn × t) = ${descuento} / (${valorNominal} × ${tiempo}) = ${tasaDescuento.toFixed(6)}</p>
+                <p>Fórmula aplicada: d = D / (Vn × t) = ${descuento} / (${valorNominal} × ${tiempo}) = ${tasaDescuento.toFixed(4)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularValorPresente() {
-            const valorFuturo = parseFloat(document.getElementById('vp-valor-futuro').value);
-            const tasa = parseFloat(document.getElementById('vp-tasa').value) / 100;
-            const periodos = parseFloat(document.getElementById('vp-periodos').value);
-            
-            const valorPresente = valorFuturo / Math.pow(1 + tasa, periodos);
-            
+            const inputs = [
+                document.getElementById('vp-valor-futuro'),
+                document.getElementById('vp-tasa'),
+                document.getElementById('vp-periodos')
+            ];
             const resultDiv = document.getElementById('vp-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const valorFuturo = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const periodos = parseInt(inputs[2].value);
+
+            const valorPresente = valorFuturo / Math.pow(1 + tasa, periodos);
+
             resultDiv.innerHTML = `
                 <p><strong>Valor Presente:</strong> $${valorPresente.toFixed(2)}</p>
                 <p>Fórmula aplicada: VP = VF / (1 + i)<sup>n</sup> = ${valorFuturo} / (1 + ${tasa})<sup>${periodos}</sup> = ${valorPresente.toFixed(2)}</p>
             `;
             resultDiv.classList.remove('hidden');
         }
-        
+
         function calcularValorFuturo() {
-            const valorPresente = parseFloat(document.getElementById('vf-valor-presente').value);
-            const tasa = parseFloat(document.getElementById('vf-tasa').value) / 100;
-            const periodos = parseFloat(document.getElementById('vf-periodos').value);
-            
-            const valorFuturo = valorPresente * Math.pow(1 + tasa, periodos);
-            
+            const inputs = [
+                document.getElementById('vf-valor-presente'),
+                document.getElementById('vf-tasa'),
+                document.getElementById('vf-periodos')
+            ];
             const resultDiv = document.getElementById('vf-result');
+
+            if (!validateInputs(inputs)) {
+                showError(resultDiv, "Por favor, ingrese valores válidos y positivos.");
+                return;
+            }
+
+            const valorPresente = parseFloat(inputs[0].value);
+            const tasa = parseFloat(inputs[1].value) / 100;
+            const periodos = parseInt(inputs[2].value);
+
+            const valorFuturo = valorPresente * Math.pow(1 + tasa, periodos);
+
             resultDiv.innerHTML = `
                 <p><strong>Valor Futuro:</strong> $${valorFuturo.toFixed(2)}</p>
                 <p>Fórmula aplicada: VF = VP × (1 + i)<sup>n</sup> = ${valorPresente} × (1 + ${tasa})<sup>${periodos}</sup> = ${valorFuturo.toFixed(2)}</p>
             `;
+            resultDiv.classList.remove('hidden');
+        }
+
+        function agregarDeuda() {
+            const montoInput = document.getElementById('ev-deuda-monto');
+            const fechaInput = document.getElementById('ev-deuda-fecha');
+            const deudasList = document.getElementById('ev-deudas-list');
+
+            if (!montoInput.value || !fechaInput.value || parseFloat(montoInput.value) <= 0) {
+                alert("Por favor, ingrese un monto válido y una fecha.");
+                return;
+            }
+
+            const deuda = {
+                monto: parseFloat(montoInput.value),
+                fecha: fechaInput.value
+            };
+
+            deudas.push(deuda);
+
+            const deudaDiv = document.createElement('div');
+            deudaDiv.className = 'payment-record';
+            deudaDiv.innerHTML = `
+                <p>Monto: $${deuda.monto.toFixed(2)} | Fecha: ${deuda.fecha}
+                <button onclick="eliminarDeuda(${deudas.length - 1})">Eliminar</button>
+            `;
+            deudasList.appendChild(deudaDiv);
+
+            montoInput.value = '';
+            fechaInput.value = '';
+        }
+
+        function eliminarDeuda(index) {
+            deudas.splice(index, 1);
+            renderDeudas();
+        }
+
+        function renderDeudas() {
+            const deudasList = document.getElementById('ev-deudas-list');
+            deudasList.innerHTML = '';
+            deudas.forEach((deuda, index) => {
+                const deudaDiv = document.createElement('div');
+                deudaDiv.className = 'payment-record';
+                deudaDiv.innerHTML = `
+                    <p>Monto: $${deuda.monto.toFixed(2)} | Fecha: ${deuda.fecha}
+                    <button onclick="eliminarDeuda(${index})">Eliminar</button>
+                `;
+                deudasList.appendChild(deudaDiv);
+            });
+        }
+
+        function agregarPago() {
+            const montoInput = document.getElementById('ev-pago-monto');
+            const fechaInput = document.getElementById('ev-pago-fecha');
+            const pagosList = document.getElementById('ev-pagos-list');
+
+            if (!montoInput.value || !fechaInput.value || parseFloat(montoInput.value) <= 0) {
+                alert("Por favor, ingrese un monto válido y una fecha.");
+                return;
+            }
+
+            const pago = {
+                monto: parseFloat(montoInput.value),
+                fecha: fechaInput.value
+            };
+
+            pagos.push(pago);
+
+            const pagoDiv = document.createElement('div');
+            pagoDiv.className = 'payment-record';
+            pagoDiv.innerHTML = `
+                <p>Monto: $${pago.monto.toFixed(2)} | Fecha: ${pago.fecha}
+                <button onclick="eliminarPago(${pagos.length - 1})">Eliminar</button>
+            `;
+            pagosList.appendChild(pagoDiv);
+
+            montoInput.value = '';
+            fechaInput.value = '';
+        }
+
+        function eliminarPago(index) {
+            pagos.splice(index, 1);
+            renderPagos();
+        }
+
+        function renderPagos() {
+            const pagosList = document.getElementById('ev-pagos-list');
+            pagosList.innerHTML = '';
+            pagos.forEach((pago, index) => {
+                const pagoDiv = document.createElement('div');
+                pagoDiv.className = 'payment-record';
+                pagoDiv.innerHTML = `
+                    <p>Monto: $${pago.monto.toFixed(2)} | Fecha: ${pago.fecha}
+                    <button onclick="eliminarPago(${index})">Eliminar</button>
+                `;
+                pagosList.appendChild(pagoDiv);
+            });
+        }
+
+        function calcularEcuacionValor() {
+            const fechaFocalInput = document.getElementById('ev-fecha-focal');
+            const tasaInput = document.getElementById('ev-tasa');
+            const resultDiv = document.getElementById('ev-result');
+
+            if (!fechaFocalInput.value || !tasaInput.value || parseFloat(tasaInput.value) < 0) {
+                showError(resultDiv, "Por favor, ingrese una fecha focal y una tasa de interés válida.");
+                return;
+            }
+
+            if (deudas.length === 0 && pagos.length === 0) {
+                showError(resultDiv, "Por favor, agregue al menos una deuda o un pago.");
+                return;
+            }
+
+            const tasa = parseFloat(tasaInput.value) / 100 / 365; // Tasa diaria
+            const fechaFocal = new Date(fechaFocalInput.value);
+
+            let sumaDeudas = 0;
+            deudas.forEach(deuda => {
+                const fechaDeuda = new Date(deuda.fecha);
+                const dias = daysBetweenDates(fechaFocal, fechaDeuda) / 365;
+                if (fechaDeuda <= fechaFocal) {
+                    sumaDeudas;cursor: pointer; += deuda.monto * Math.pow(1 + tasa, dias);
+                } else {
+                    sumaDeudas += deuda.monto / Math.pow(1 + tasa, dias);
+                }
+            });
+
+            let sumaPagos = 0;
+            pagos.forEach(pago => {
+                const fechaPago = new Date(pago.fecha);
+                const dias = daysBetweenDates(fechaFocal, fechaPago) / 365;
+                if (fechaPago <= fechaFocal) {
+                    sumaPagos += pago.monto * Math.pow(1 + tasa, dias);
+                } else {
+                    sumaPagos += pago.monto / Math.pow(1 + tasa, dias);
+                }
+            });
+
+            const diferencia = sumaDeudas - sumaPagos;
+
+            resultDiv.innerHTML = `
+                <p><strong>Suma de Deudas en Fecha Focal:</strong> $${sumaDeudas.toFixed(2)}</p>
+                <p><strong>Suma de Pagos en Fecha Focal:</strong> $${sumaPagos.toFixed(2)}</p>
+                <p><strong>Diferencia (Deuda - Pagos):</strong> $${diferencia.toFixed(2)}</p>
+                <p>Nota: Si la diferencia es positiva, indica que las deudas superan los pagos. Si es negativa, los pagos superan las deudas.</p>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+
+        function agregarPagoReglaSaldos() {
+            const montoInput = document.getElementById('rs-pago-monto');
+            const fechaInput = document.getElementById('rs-pago-fecha');
+            const pagosList = document.getElementById('rs-pagos-list');
+
+            if (!montoInput.value || !fechaInput.value || parseFloat(montoInput.value) <= 0) {
+                alert("Por favor, ingrese un monto válido y una fecha.");
+                return;
+            }
+
+            const pago = {
+                monto: parseFloat(montoInput.value),
+                fecha: fechaInput.value
+            };
+
+            pagosReglaSaldos.push(pago);
+
+            const pagoDiv = document.createElement('div');
+            pagoDiv.className = 'payment-record';
+            pagoDiv.innerHTML = `
+                <p>Monto: $${pago.monto.toFixed(2)} | Fecha: ${pago.fecha}
+                <button onclick="eliminarPagoReglaSaldos(${pagosReglaSaldos.length - 1})">Eliminar</button>
+            `;
+            pagosList.appendChild(pagoDiv);
+
+            montoInput.value = '';
+            fechaInput.value = '';
+        }
+
+        function eliminarPagoReglaSaldos(index) {
+            pagosReglaSaldos.splice(index, 1);
+            renderPagosReglaSaldos();
+        }
+
+        function renderPagosReglaSaldos() {
+            const pagosList = document.getElementById('rs-pagos-list');
+            pagosList.innerHTML = '';
+            pagosReglaSaldos.forEach((pago, index) => {
+                const pagoDiv = document.createElement('div');
+                pagoDiv.className = 'payment-record';
+                pagoDiv.innerHTML = `
+                    <p>Monto: $${pago.monto.toFixed(2)} | Fecha: ${pago.fecha}
+                    <button onclick="eliminarPagoReglaSaldos(${index})">Eliminar</button>
+                `;
+                pagosList.appendChild(pagoDiv);
+            });
+        }
+
+        function calcularReglaSaldos() {
+            const capitalInput = document.getElementById('rs-capital');
+            const tasaInput = document.getElementById('rs-tasa');
+            const resultDiv = document.getElementById('rs-result');
+
+            if (!capitalInput.value || !tasaInput.value || parseFloat(capitalInput.value) <= 0 || parseFloat(tasaInput.value) < 0) {
+                showError(resultDiv, "Por favor, ingrese un capital inicial y una tasa de interés válidos.");
+                return;
+            }
+
+            if (pagosReglaSaldos.length === 0) {
+                showError(resultDiv, "Por favor, agregue al menos un pago.");
+                return;
+            }
+
+            const capital = parseFloat(capitalInput.value);
+            const tasa = parseFloat(tasaInput.value) / 100 / 365; // Tasa diaria
+            let saldo = capital;
+            let fechaAnterior = null;
+            let tableHTML = `
+                <table class="payment-table">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Saldo Anterior</th>
+                        <th>Intereses</th>
+                        <th>Pago</th>
+                        <th>Nuevo Saldo</th>
+                    </tr>
+                    <tr>
+                        <td>Inicial</td>
+                        <td>$${capital.toFixed(2)}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>$${capital.toFixed(2)}</td>
+                    </tr>
+            `;
+
+            pagosReglaSaldos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+            pagosReglaSaldos.forEach(pago => {
+                const fechaPago = new Date(pago.fecha);
+                let dias = fechaAnterior ? daysBetweenDates(fechaAnterior, fechaPago) / 365 : 0;
+                const intereses = saldo * tasa * dias;
+                const nuevoSaldo = saldo + intereses - pago.monto;
+
+                tableHTML += `
+                    <tr>
+                        <td>${pago.fecha}</td>
+                        <td>$${saldo.toFixed(2)}</td>
+                        <td>$${intereses.toFixed(2)}</td>
+                        <td>$${pago.monto.toFixed(2)}</td>
+                        <td>$${nuevoSaldo.toFixed(2)}</td>
+                    </tr>
+                `;
+
+                saldo = nuevoSaldo;
+                fechaAnterior = fechaPago;
+            });
+
+            tableHTML += '</table>';
+
+            resultDiv.innerHTML = `
+                <p><strong>Saldo Final:</strong> $${saldo.toFixed(2)}</p>
+                <p>Detalles de los cálculos:</p>
+                ${tableHTML}
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+
+        function agregarPagoParcial() {
+            const montoInput = document.getElementById('pp-pago-monto');
+            const fechaInput = document.getElementById('pp-pago-fecha');
+            const pagosList = document.getElementById('pp-pagos-list');
+
+            if (!montoInput.value || !fechaInput.value || parseFloat(montoInput.value) <= 0) {
+                alert("Por favor, ingrese un monto válido y una fecha.");
+                return;
+            }
+
+            const pago = {
+                monto: parseFloat(montoInput.value),
+                fecha: fechaInput.value
+            };
+
+            pagosParciales.push(pago);
+
+            const pagoDiv = document.createElement('div');
+            pagoDiv.className = 'payment-record';
+            pagoDiv.innerHTML = `
+                <p>Monto: $${pago.monto.toFixed(2)} | Fecha: ${pago.fecha}
+                <button onclick="eliminarPagoParcial(${pagosParciales.length - 1})">Eliminar</button>
+            `;
+            pagosList.appendChild(pagoDiv);
+
+            montoInput.value = '';
+            fechaInput.value = '';
+        }
+
+        function eliminarPagoParcial(index) {
+            pagosParciales.splice(index, 1);
+            renderPagosParciales();
+        }
+
+        function renderPagosParciales() {
+            const pagosList = document.getElementById('pp-pagos-list');
+            pagosList.innerHTML = '';
+            pagosParciales.forEach((pago, index) => {
+                const pagoDiv = document.createElement('div');
+                pagoDiv.className = 'payment-record';
+                pagoDiv.innerHTML = `
+                    <p>Monto: $${pago.monto.toFixed(2)} | Fecha: ${pago.fecha}
+                    <button onclick="eliminarPagoParcial(${index})">Eliminar</button>
+                `;
+                pagosList.appendChild(pagoDiv);
+            });
+        }
+
+        function calcularPagosParciales(metodo) {
+            const capitalInput = document.getElementById('pp-capital');
+            const tasaInput = document.getElementById('pp-tasa');
+            const fechaInicioInput = document.getElementById('pp-fecha-inicio');
+            const resultDiv = document.getElementById('pp-result');
+
+            if (!capitalInput.value || !tasaInput.value || !fechaInicioInput.value || parseFloat(capitalInput.value) <= 0 || parseFloat(tasaInput.value) < 0) {
+                showError(resultDiv, "Por favor, ingrese un capital inicial, una tasa de interés y una fecha de inicio válidos.");
+                return;
+            }
+
+            if (pagosParciales.length === 0) {
+                showError(resultDiv, "Por favor, agregue al menos un pago.");
+                return;
+            }
+
+            const capital = parseFloat(capitalInput.value);
+            const tasa = parseFloat(tasaInput.value) / 100 / 365; // Tasa diaria
+            const fechaInicio = new Date(fechaInicioInput.value);
+            pagosParciales.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+            if (metodo === 'sauerbeck') {
+                const ultimaFecha = new Date(pagosParciales[pagosParciales.length - 1].fecha);
+                const diasTotales = daysBetweenDates(fechaInicio, ultimaFecha) / 365;
+                const montoTotal = capital * Math.pow(1 + tasa, diasTotales);
+                const sumaPagos = pagosParciales.reduce((sum, pago) => sum + pago.monto, 0);
+                const saldo = montoTotal - sumaPagos;
+
+                resultDiv.innerHTML = `
+                    <p><strong>Método de Sauerbeck - Saldo Final:</strong> $${saldo.toFixed(2)}</p>
+                    <p>Detalles:</p>
+                    <p>Monto total de la deuda hasta ${ultimaFecha.toISOString().split('T')[0]}: $${montoTotal.toFixed(2)}</p>
+                    <p>Suma de pagos realizados: $${sumaPagos.toFixed(2)}</p>
+                    <p>Fórmula aplicada: Saldo = Monto Total - Σ Pagos</p>
+                `;
+            } else if (metodo === 'horas') {
+                let saldo = capital;
+                let fechaAnterior = fechaInicio;
+                let tableHTML = `
+                    <table class="payment-table">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Saldo Anterior</th>
+                            <th>Intereses</th>
+                            <th>Pago</th>
+                            <th>Nuevo Saldo</th>
+                        </tr>
+                        <tr>
+                            <td>${fechaInicio.toISOString().split('T')[0]}</td>
+                            <td>$${capital.toFixed(2)}</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>$${capital.toFixed(2)}</td>
+                        </tr>
+                `;
+
+                pagosParciales.forEach(pago => {
+                    const fechaPago = new Date(pago.fecha);
+                    const dias = daysBetweenDates(fechaAnterior, fechaPago) / 365;
+                    const intereses = saldo * tasa * dias;
+                    const nuevoSaldo = saldo + intereses - pago.monto;
+
+                    tableHTML += `
+                        <tr>
+                            <td>${pago.fecha}</td>
+                            <td>$${saldo.toFixed(2)}</td>
+                            <td>$${intereses.toFixed(2)}</td>
+                            <td>$${pago.monto.toFixed(2)}</td>
+                            <td>$${nuevoSaldo.toFixed(2)}</td>
+                        </tr>
+                    `;
+
+                    saldo = nuevoSaldo;
+                    fechaAnterior = fechaPago;
+                });
+
+                tableHTML += '</table>';
+
+                resultDiv.innerHTML = `
+                    <p><strong>Método de Horas - Saldo Final:</strong> $${saldo.toFixed(2)}</p>
+                    <p>Detalles de los cálculos:</p>
+                    ${tableHTML}
+                `;
+            }
+
             resultDiv.classList.remove('hidden');
         }
     </script>
