@@ -27,6 +27,7 @@
             margin: 1rem auto;
             width: 200px;
             height: 200px;
+            border: 1px solid #eee; /* Borde sutil para el contenedor */
         }
         #qr-code {
             width: 100%;
@@ -37,8 +38,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 20%;
+            width: 50px; /* Tamaño fijo para mejor control */
+            height: 50px;
             opacity: 0.9;
+            background-color: white; /* Fondo blanco para logos sin transparencia */
+            border-radius: 8px; /* Esquinas redondeadas */
+            padding: 5px; /* Espacio interno */
+            box-sizing: border-box;
         }
         h1 {
             color: #000;
@@ -48,31 +54,52 @@
         p {
             color: #666;
             font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #000;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="qr-card">
         <h1>Regístrate en World Travel Awards</h1>
-        <p>Escanea el código QR con tu móvil</p>
+        <p>Escanea el código QR con tu móvil para acceder al registro oficial</p>
         
         <div class="qr-wrapper">
             <div id="qr-code"></div>
-            <img class="qr-Logo" src="Logo.png" alt="Logo">
+            <!-- Asegúrate de que Logo.png esté en la misma carpeta -->
+            <img class="qr-logo" src="Logo.png" alt="Logo de la marca">
         </div>
+
+        <a href="https://www.worldtravelawards.com/register" class="btn">Ir al registro directo</a>
     </div>
 
     <!-- Librería QR -->
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script>
+        // Generar QR con corrección de errores alta
         new QRCode(document.getElementById("qr-code"), {
             text: "https://www.worldtravelawards.com/register",
             width: 200,
             height: 200,
-            colorDark: "#000000",  // Negro puro
-            colorLight: "#ffffff", // Blanco
-            correctLevel: QRCode.CorrectLevel.H  // Alta corrección de errores
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
         });
+
+        // Opcional: Precargar el logo para evitar parpadeos
+        window.onload = function() {
+            const logo = new Image();
+            logo.src = "Logo.png";
+        };
     </script>
 </body>
 </html>
